@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import LandingPage from './pages/LandingPage'
+import AppPage from './pages/AppPage'
 
 export default function App() {
   const [page, setPage] = useState('landing')
@@ -10,9 +11,7 @@ export default function App() {
         <LandingPage onGetStarted={() => setPage('app')} />
       )}
       {page === 'app' && (
-        <div className="min-h-screen flex items-center justify-center bg-white">
-          <h1 className="text-2xl font-bold text-gold">App Flow Coming Next...</h1>
-        </div>
+        <AppPage onBack={() => setPage('landing')} />
       )}
     </>
   )
