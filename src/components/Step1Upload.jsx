@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react'
 
 const IconUpload = () => (
-  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
     <polyline points="16 16 12 12 8 16"/>
     <line x1="12" y1="12" x2="12" y2="21"/>
     <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>
@@ -30,6 +30,19 @@ const IconX = () => (
   </svg>
 )
 
+const IconCheck = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="20 6 9 17 4 12"/>
+  </svg>
+)
+
+const tips = [
+  { label: 'Stand back so shoulders and face are both visible' },
+  { label: 'Face forward, standing upright — no sitting or crouching' },
+  { label: 'Natural light, no flash, no filters' },
+  { label: 'Single person only, clear background preferred' },
+]
+
 export default function Step1Upload({ onNext }) {
   const [preview, setPreview] = useState(null)
   const [file, setFile] = useState(null)
@@ -45,12 +58,7 @@ export default function Step1Upload({ onNext }) {
   const handleDrop = (e) => {
     e.preventDefault()
     setDragging(false)
-    const f = e.dataTransfer.files[0]
-    handleFile(f)
-  }
-
-  const handleChange = (e) => {
-    handleFile(e.target.files[0])
+    handleFile(e.dataTransfer.files[0])
   }
 
   const clearFile = () => {
@@ -64,12 +72,14 @@ export default function Step1Upload({ onNext }) {
 
       {/* Heading */}
       <div className="mb-10">
-        <span className="text-xs text-yellow-600 font-semibold uppercase tracking-widest block mb-3">Step 1 of 3</span>
+        <span className="text-xs text-yellow-600 font-semibold uppercase tracking-widest block mb-3">
+          Step 1 of 3
+        </span>
         <h1 style={{ fontFamily: 'Playfair Display, serif' }} className="text-4xl font-bold text-stone-900 mb-3">
-          Upload your selfie
+          Upload your photo
         </h1>
         <p className="text-stone-400 text-base leading-relaxed max-w-md">
-          Use a clear, front-facing photo in natural light. No filters — we need to read your actual skin tone.
+          We need a clear upper-body photo — shoulders to head — so our AI can analyze your skin and try on outfits accurately.
         </p>
       </div>
 
@@ -81,16 +91,17 @@ export default function Step1Upload({ onNext }) {
           onDragLeave={() => setDragging(false)}
           onDrop={handleDrop}
           className={`w-full border-2 border-dashed rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-colors py-20 px-8
-            ${dragging ? 'border-yellow-400 bg-yellow-50' : 'border-stone-200 hover:border-yellow-300 hover:bg-stone-50'}
+            ${dragging
+              ? 'border-yellow-400 bg-yellow-50'
+              : 'border-stone-200 hover:border-yellow-300 hover:bg-stone-50'
+            }
           `}
         >
           <div className={`mb-4 transition-colors ${dragging ? 'text-yellow-500' : 'text-stone-300'}`}>
             <IconImage />
           </div>
-          <p className="text-sm font-semibold text-stone-700 mb-1">
-            Drop your photo here
-          </p>
-          <p className="text-xs text-stone-400 mb-6">or click to browse your files</p>
+          <p className="text-sm font-semibold text-stone-700 mb-1">Drop your photo here</p>
+          <p className="text-xs text-stone-400 mb-6">or click to browse — jpg or png, under 10MB</p>
           <div className="flex items-center gap-2 text-xs font-medium text-yellow-600 border border-yellow-200 px-4 py-2 rounded-full">
             <IconUpload />
             Choose photo
@@ -98,16 +109,16 @@ export default function Step1Upload({ onNext }) {
           <input
             ref={inputRef}
             type="file"
-            accept="image/*"
+            accept="image/jpg,image/jpeg,image/png"
             className="hidden"
-            onChange={handleChange}
+            onChange={(e) => handleFile(e.target.files[0])}
           />
         </div>
       ) : (
         <div className="w-full rounded-2xl overflow-hidden border border-stone-100 relative">
           <img
             src={preview}
-            alt="Your selfie preview"
+            alt="Your photo preview"
             className="w-full object-cover max-h-96"
           />
           <button
@@ -123,16 +134,20 @@ export default function Step1Upload({ onNext }) {
       )}
 
       {/* Tips */}
-      <div className="mt-6 grid grid-cols-3 gap-4">
-        {[
-          { tip: 'Face forward, chin level' },
-          { tip: 'Natural light, no flash' },
-          { tip: 'No heavy filters or edits' },
-        ].map((t) => (
-          <div key={t.tip} className="bg-stone-50 rounded-xl p-4 border border-stone-100">
-            <p className="text-xs text-stone-500 leading-relaxed">{t.tip}</p>
-          </div>
-        ))}
+      <div className="mt-6 bg-stone-50 border border-stone-100 rounded-2xl p-6">
+        <p className="text-xs text-stone-400 uppercase tracking-widest font-medium mb-4">
+          Photo requirements
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {tips.map((t) => (
+            <div key={t.label} className="flex items-start gap-3">
+              <div className="w-5 h-5 rounded-full bg-yellow-50 border border-yellow-100 flex items-center justify-center shrink-0 mt-0.5 text-yellow-600">
+                <IconCheck />
+              </div>
+              <p className="text-xs text-stone-500 leading-relaxed">{t.label}</p>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* CTA */}
@@ -150,6 +165,9 @@ export default function Step1Upload({ onNext }) {
           Analyze my skin
           <IconArrow />
         </button>
+        {!preview && (
+          <p className="text-xs text-stone-400 mt-3">Upload a photo to continue</p>
+        )}
       </div>
 
     </div>
